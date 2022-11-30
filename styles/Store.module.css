@@ -1,0 +1,16 @@
+.container {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
+
+.label {
+  margin-top: 30px;
+}
+
+.button {
+  position: relative;
+  bottom: 0;
+  margin-top: 270px;
+}

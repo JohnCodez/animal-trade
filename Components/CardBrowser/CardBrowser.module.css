@@ -1,0 +1,20 @@
+.container {
+  margin: 10px;
+  padding: 40px;
+  height: var(--windowHeight);
+  width: var(--windowWidth);
+  border-radius: 40px;
+  border: solid black 2px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  justify-content: center;
+  background-color: rgb(167, 167, 167);
+
+  overflow-y: scroll;
+  -ms-overflow-style: none;  /* Hide scrollbar for IE and Edge */
+  scrollbar-width: none;  /* Hide scrollbar for Firefox */
+}
+.container::-webkit-scrollbar {
+  display: none; /* Hide scrollbar for Chrome, Safari and Opera */
+}

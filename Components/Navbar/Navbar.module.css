@@ -1,0 +1,52 @@
+.container {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 100px;
+}
+
+.topbar {
+  position: absolute;
+  width: 100%;
+  padding: 30px 60px 100px 60px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.topbar > * > * {
+  margin: 5px;
+  padding: 8px;
+  background-color: white;
+  border-radius: 40px;
+  border: solid rgb(82, 82, 82) 2px;
+  width: 100px;
+  text-align: center;
+}
+
+.buttons {
+  display: flex;
+  flex-direction: row;
+}
+
+.buttons > * {
+  cursor: pointer;
+}
+
+.bank {
+  display: flex;
+  flex-direction: row;
+}
+
+.selected {
+  background-color: rgba(0, 0, 0);
+  color: white;
+  cursor: default;
+}
+
+.gems, .coins {
+  width: fit-content;
+  padding: 8px 20px;
+}
