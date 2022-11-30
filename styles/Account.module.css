@@ -1,0 +1,36 @@
+.container {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 50px;
+}
+
+.window {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: white;
+  padding: 100px 250px 100px 250px;
+  width: fit-content;
+  height: fit-content;
+  border-radius: 10px;
+  border: 1px black solid;
+}
+.title {
+  font-size: 50px;
+  padding-bottom: 30px;
+}
+
+.username, .email {
+  font-size: 20px;
+}
+
+.logout {
+  padding-top: 30px;
+  font-size: 30px;
+  cursor: pointer;
+}
