@@ -1,21 +1,19 @@
-import React, { useEffect } from 'react'
-import LoginForm from '../Components/LoginForm/LoginForm'
+import React, { useEffect, useContext } from 'react'
+import { useRouter } from 'next/router'
+import LoginForm from '../Components/LoginForm'
+import { UuidContext } from './_app'
 
 const login = () => {
+  const { push } = useRouter();
+  const { uuid, setUuid } = useContext(UuidContext);
 
   useEffect(() => {
-		if (typeof window !== 'undefined') {
-      if(localStorage.getItem('uuid')){
-        push('/account')
-      }
-		}
+    if(uuid){
+      push('/account')
+    }
 	}, [])
 
-  return (
-    <div>
-      <LoginForm />
-    </div>
-  )
+  return <LoginForm />
 }
 
 export default login

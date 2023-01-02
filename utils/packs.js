@@ -1,8 +1,10 @@
 import { getInventory, setInventory } from './inventory.js'
-import { decreaseCoins, decreaseGems, getBank } from '../utils/bank.js';
+import { setGems, getBank, setCoins } from '../utils/bank.js';
 
 export const packs = {
   farm: {
+    name: 'Farm Pack',
+    type: 'farm',
     currencyType: 'coins',
     cost: 100,
     contents: [
@@ -13,8 +15,10 @@ export const packs = {
     ],
   },
   sea: {
+    name: 'Sea Pack',
+    type: 'sea',
     currencyType: 'gems',
-    cost: 1,
+    cost: 10,
     contents: [
       {type: 'stingray', name: 'Stingray'},
       {type: 'jellyfish', name: 'Jellyfish'},
@@ -47,15 +51,18 @@ export function addNewUnit({ type, quantity = 1}) {
   }
 }
 
-export function rollPack({ type, quantity = 1, errorCallback = () => {}}) {
-  const bank = getBank()
-  if(packs[type].currencyType === 'coins' && packs[type].cost <= bank.coins) {
-    decreaseCoins(packs[type].cost)
-    addNewUnit({ type, quantity })
-  } else if (packs[type].currencyType === 'gems' && packs[type].cost <= bank.gems) {
-    decreaseGems(packs[type].cost)
-    addNewUnit({ type, quantity })
+export async function rollPack({ type, quantity = 1, errorCallback = () => {}, uuid, bank, setBank}) {
+  if(bank){
+    if(packs[type].currencyType === 'coins' && packs[type].cost <= bank.coins) {
+      setCoins({uuid: uuid, coinsInput: bank.coins - packs[type].cost, setBank})
+      addNewUnit({ type, quantity })
+    } else if (packs[type].currencyType === 'gems' && packs[type].cost <= bank.gems) {
+      setGems({uuid: uuid, gemsInput: bank.gems - packs[type].cost, setBank})
+      addNewUnit({ type, quantity })
+    } else {
+      errorCallback()
+    }
   } else {
-    errorCallback()
+    console.error('Failed to retrive bank data')
   }
 }
