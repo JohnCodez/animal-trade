@@ -1,22 +1,21 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useContext } from 'react'
 import { useRouter } from 'next/router'
 
+import { UuidContext } from '../../pages/_app'
 import { login } from '../../utils/api'
 import styles from './LoginForm.module.css'
 
 const LoginForm = () => {
   const { push } = useRouter();
-
-  useEffect(() => {
-
-  }, [])
+  const { uuid, setUuid } = useContext(UuidContext);
 
   function handleSubmit(event) {
     event.preventDefault()
-    const email = event.target[0].value
-    const password = event.target[1].value
-    login({ email: email, password: password, onSuccess: () => push('/account')})
+    const femail = event.target[0].value
+    const fpassword = event.target[1].value
+    login({ email: femail, password: fpassword, onSuccess: () => push('/account'), setUuid})
   }
+
   return (
     <div className={styles.container}>
       <div className={styles.window}>

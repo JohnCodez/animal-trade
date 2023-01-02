@@ -1,9 +1,38 @@
 import { API_URL, HASURA_ADMIN_KEY } from '../constants/api.js'
+import { ApolloClient, InMemoryCache, HttpLink } from 'apollo-client-preset';
+import gql from 'graphql-tag';
 
-export function getBank({uuid, setBank}) {
-  const query = `
+const client = new ApolloClient({
+  link: new HttpLink({ 
+    uri: API_URL,
+    headers: {
+      'x-hasura-admin-secret': `${HASURA_ADMIN_KEY}`
+    }
+   }),
+  cache: new InMemoryCache()
+});
+
+export function getBankSubscription({ uuid }) {
+  const subscription = client.subscribe({
+    query: gql`
       {
-        user(where: {uuid: {_eq: "${uuid}"}}) {
+        user(where: { uuid: { _eq: "${uuid}" } }) {
+          banks {
+            gems
+            coins
+          }
+        }
+      }
+    `,
+  });
+ 
+  return subscription;
+}
+
+export async function getBank({uuid}) {
+  const result = await client.query({
+    query: gql`{
+        user(where: { uuid: { _eq: "${uuid}" } }) {
           banks {
             gems
             coins
@@ -11,58 +40,76 @@ export function getBank({uuid, setBank}) {
         }
       }
     `
-
-  fetch(API_URL, {
-    method: 'POST',
-    headers: { 
-      'Content-Type': 'application/json',
-      'x-hasura-admin-secret': `${HASURA_ADMIN_KEY}`
-    },
-    body: JSON.stringify({
-      query: query
-    })
-  }).then(data => data.json())
-  .then(data => {
-    const bank = data.data.user[0].banks[0]
-    setBank(bank)
-  })
+  });
+  return result.data.user[0].banks[0];
 }
 
 // Coins
-export function addCoins(coinsInput) {
-  bank.coins += coinsInput
-  return bank.coins
-}
-
-export function decreaseCoins(coinsInput) {
-  bank.coins -= coinsInput
-  return bank.coins
-}
-
-export function setCoins(coinsInput) {
-  bank.coins = coinsInput
-  return bank.coins
+export function setCoins({uuid, coinsInput, setBank}) {
+  const client = new ApolloClient({
+    link: new HttpLink({ 
+      uri: API_URL,
+      headers: {
+        'x-hasura-admin-secret': `${HASURA_ADMIN_KEY}`
+      }
+    }),
+    cache: new InMemoryCache()
+  });
+  client
+    .mutate({
+      mutation: gql`
+        mutation UpdateCoins {
+          update_bank(where: {users: {uuid: {_eq: "${uuid}"}}}, _set: {coins: ${coinsInput}}) {
+            returning {
+              gems
+              coins
+            }
+          }
+        }
+      `
+    })
+    .then(result => {
+      const updatedBank = result.data.update_bank.returning[0];
+      if (setBank) {
+        setBank(updatedBank);
+      }
+    })
+    .catch(error => {
+      console.error(error);
+    });
 }
 
 // Gems
-export function addGems(gemsInput) {
-  bank.gems += gemsInput
-  return bank.gems
-}
-
-export function decreaseGems(gemsInput) {
-  bank.gems -= gemsInput
-  return bank.gems
-}
-
-export function setGems(gemsInput) {
-  bank.gems = gemsInput
-  return bank.gems
-}
-
-// both
-
-export function addCurrency() {
-  bank.coins = 900
-  bank.gems = 10
+export function setGems({uuid, gemsInput, setBank}) {
+  const client = new ApolloClient({
+    link: new HttpLink({ 
+      uri: API_URL,
+      headers: {
+        'x-hasura-admin-secret': `${HASURA_ADMIN_KEY}`
+      }
+    }),
+    cache: new InMemoryCache()
+  });
+  client
+    .mutate({
+      mutation: gql`
+        mutation UpdateGems {
+          update_bank(where: {users: {uuid: {_eq: "${uuid}"}}}, _set: {gems: ${gemsInput}}) {
+            returning {
+              gems
+              coins
+            }
+          }
+        }
+      `
+    })
+    .then(result => {
+      const updatedBank = result.data.update_bank.returning[0];
+      if (setBank) {
+        setBank(updatedBank);
+      }
+    })
+    .catch(error => {
+      console.error(error);
+    });
 }

@@ -1,24 +1,25 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useContext, useState } from 'react'
 import { useRouter } from 'next/router'
+import { UuidContext } from './_app'
 
 import styles from '../styles/Account.module.css'
+import { getAccount } from '../utils/api'
 
 const account = () => {
-  const { push, asPath } = useRouter();
-  const [ username, setUsername ] = useState(null)
-	const [ email, setEmail] = useState(null)
+  const { push } = useRouter();
+  const { uuid, setUuid } = useContext(UuidContext)
+	const [ account, setAccount ] = useState(null)
 
 	useEffect(() => {
-		if (typeof window !== 'undefined') {
-			setUsername(localStorage.getItem('username'))
-			setEmail(localStorage.getItem('email'))
-      if(!localStorage.getItem('uuid')){
-        push('/login')
-      }
-		}
+    if(!uuid){
+      push('/login')
+    } else {
+      getAccount({uuid, setAccount})
+    }
 	}, [])
 
   function handleLogout() {
+    setUuid(null)
     localStorage.clear()
     push('/login')
   }
@@ -27,8 +28,10 @@ const account = () => {
     <div className={styles.container}>
       <div className={styles.window}>
         <div className={styles.title}>Account</div>
-        <div className={styles.username}>Username: {username}</div>
-        <div className={styles.email}>Email: {email}</div>
+        {account && <>
+          <div className={styles.username}>Username: {account.username}</div>
+          <div className={styles.email}>Email: {account.email}</div>
+        </>}
         <div onClick={handleLogout} className={styles.logout}>Logout</div>
       </div>
     </div>
